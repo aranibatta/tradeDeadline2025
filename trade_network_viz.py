@@ -3,17 +3,26 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 
-# Define NBA team colors
+# Define NBA team colors and name mappings
 TEAM_COLORS = {
-    'ATL': '#E03A3E', 'BOS': '#007A33', 'BKN': '#000000', 'CHA': '#1D1160',
-    'CHI': '#CE1141', 'CLE': '#860038', 'DAL': '#00538C', 'DEN': '#0E2240',
-    'DET': '#C8102E', 'GSW': '#1D428A', 'HOU': '#CE1141', 'IND': '#002D62',
-    'LAC': '#C8102E', 'LAL': '#552583', 'MEM': '#5D76A9', 'MIA': '#98002E',
-    'MIL': '#00471B', 'MIN': '#0C2340', 'NOP': '#0C2340', 'NYK': '#006BB6',
-    'OKC': '#007AC1', 'ORL': '#0077C0', 'PHI': '#006BB6', 'PHX': '#1D1160',
-    'POR': '#E03A3E', 'SAC': '#5A2D81', 'SAS': '#C4CED4', 'TOR': '#CE1141',
-    'UTA': '#002B5C', 'WAS': '#002B5C'
+    'Hawks': '#E03A3E', 'Celtics': '#007A33', 'Nets': '#000000', 'Hornets': '#1D1160',
+    'Bulls': '#CE1141', 'Cavaliers': '#860038', 'Mavericks': '#00538C', 'Nuggets': '#0E2240',
+    'Pistons': '#C8102E', 'Warriors': '#1D428A', 'Rockets': '#CE1141', 'Pacers': '#002D62',
+    'Clippers': '#C8102E', 'Lakers': '#552583', 'Grizzlies': '#5D76A9', 'Heat': '#98002E',
+    'Bucks': '#00471B', 'Timberwolves': '#0C2340', 'Pelicans': '#0C2340', 'Knicks': '#006BB6',
+    'Thunder': '#007AC1', 'Magic': '#0077C0', '76ers': '#006BB6', 'Suns': '#1D1160',
+    'Trail Blazers': '#E03A3E', 'Kings': '#5A2D81', 'Spurs': '#C4CED4', 'Raptors': '#CE1141',
+    'Jazz': '#002B5C', 'Wizards': '#002B5C'
 }
+
+def clean_team_name(team_name):
+    """Clean team name to match the format in TEAM_COLORS dictionary."""
+    # Remove any trailing/leading whitespace
+    team = team_name.strip()
+    # Extract team name from before the colon
+    if ':' in team:
+        team = team.split(':', 1)[0].strip()
+    return team
 
 def create_trade_network(trades_file, player_stats_file):
     """
@@ -52,7 +61,7 @@ def create_trade_network(trades_file, player_stats_file):
             team_col = f'Team{i}'
             if pd.notna(row[team_col]) and ':' in row[team_col]:
                 team, players = row[team_col].split(':', 1)
-                team = team.strip()
+                team = clean_team_name(team)
                 players_list = [p.strip() for p in players.strip().split(';')]
                 
                 total_pra = sum(player_stats_dict.get(player, 0) for player in players_list)
